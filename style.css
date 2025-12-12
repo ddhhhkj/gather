@@ -1,0 +1,55 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.month-container {
+    margin-bottom: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.calendar-day-header {
+    font-weight: bold;
+    text-align: center;
+}
+
+#calendar-container {
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.calendar-day.disabled {
+    background-color: #eee;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.calendar-day.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+#submit-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
