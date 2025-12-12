@@ -225,9 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Display best dates
         if (bestDates.length > 0) {
-            html += '<h3 style="color: #28a745;">🌟 Best Dates (Most Popular)</h3>';
+            html += '<h3>🎉 Best Dates (Most Popular)</h3>';
             html += '<ul>';
-            bestDates.forEach(data => {
+            bestDates.forEach((data, index) => {
                 const date = new Date(data.dateString);
                 const formattedDate = date.toLocaleDateString('en-US', { 
                     weekday: 'long', 
@@ -235,30 +235,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     month: 'long', 
                     day: 'numeric' 
                 });
-                html += `<li><strong>${formattedDate}</strong> - ${data.count} vote(s) from: ${data.users.join(', ')}</li>`;
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
+                html += `<li style="animation-delay: ${index * 0.1}s;">${medal} <strong>${formattedDate}</strong> - ${data.count} vote(s) from: ${data.users.join(', ')}</li>`;
             });
             html += '</ul>';
         }
 
         // Display all submissions
-        html += '<h3>All Submissions</h3>';
+        html += '<h3>👥 All Submissions</h3>';
         html += '<div class="submissions-list">';
-        submissions.forEach(submission => {
-            html += `<div class="submission-item">`;
-            html += `<strong>${submission.name}</strong>: `;
+        submissions.forEach((submission, index) => {
+            html += `<div class="submission-item" style="animation-delay: ${index * 0.1}s;">`;
+            html += `<strong>👤 ${submission.name}</strong>: `;
             const dateList = submission.dates.map(date => {
                 const d = new Date(date);
                 return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             }).join(', ');
-            html += dateList;
+            html += `<span style="color: #667eea;">📅 ${dateList}</span>`;
             html += `</div>`;
         });
         html += '</div>';
 
         // Display all dates with vote counts
-        html += '<h3>Date Popularity</h3>';
+        html += '<h3>📊 Date Popularity</h3>';
         html += '<div class="date-popularity">';
-        sortedDates.forEach(data => {
+        sortedDates.forEach((data, index) => {
             const date = new Date(data.dateString);
             const formattedDate = date.toLocaleDateString('en-US', { 
                 weekday: 'short', 
@@ -266,10 +267,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 day: 'numeric' 
             });
             const isBest = data.count === maxVotes;
-            html += `<div class="date-vote-item ${isBest ? 'best-date' : ''}">`;
-            html += `<span class="date-label">${formattedDate}</span>`;
-            html += `<span class="vote-count">${data.count} vote(s)</span>`;
-            html += `<span class="voters">(${data.users.join(', ')})</span>`;
+            html += `<div class="date-vote-item ${isBest ? 'best-date' : ''}" style="animation-delay: ${index * 0.05}s;">`;
+            html += `<span class="date-label">📅 ${formattedDate}</span>`;
+            html += `<span class="vote-count">👍 ${data.count} vote${data.count !== 1 ? 's' : ''}</span>`;
+            html += `<span class="voters">👥 ${data.users.join(', ')}</span>`;
             html += `</div>`;
         });
         html += '</div>';
