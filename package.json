@@ -1,7 +1,7 @@
 {
-  "name": "potluck-date-picker",
+  "name": "party-date-picker",
   "version": "1.0.0",
-  "description": "A simple website to collect preferred dates for a potluck.",
+  "description": "A simple website to collect preferred dates for a party.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

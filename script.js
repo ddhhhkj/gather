@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const calendarContainer = document.getElementById('calendar-container');
     const submitBtn = document.getElementById('submit-btn');
     const thankYouMessage = document.getElementById('thank-you-message');
+    const nameInput = document.getElementById('name-input');
+    const summaryContent = document.getElementById('summary-content');
 
     const today = new Date();
     // Set hours, minutes, seconds, and milliseconds to 0 to compare dates accurately
@@ -146,18 +148,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     submitBtn.addEventListener('click', () => {
-        fetch('/api/dates', {
+        const name = nameInput.value.trim();
+        if (!name) {
+            alert('Please enter your name.');
+            return;
+        }
+        if (selectedDates.length === 0) {
+            alert('Please select at least one date.');
+            return;
+        }
+
+        fetch('/api/submissions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ dates: selectedDates })
+            body: JSON.stringify({ name: name, dates: selectedDates })
         })
         .then(response => response.json())
         .then(data => {
             console.log(data.message);
             thankYouMessage.style.display = 'block';
-            submitBtn.style.display = 'none';
+            thankYouMessage.textContent = data.message;
+            loadSummary();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -165,5 +178,106 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function loadSummary() {
+        fetch('/api/submissions')
+            .then(response => response.json())
+            .then(submissions => {
+                displaySummary(submissions);
+            })
+            .catch(error => {
+                console.error('Error loading summary:', error);
+            });
+    }
+
+    function displaySummary(submissions) {
+        if (submissions.length === 0) {
+            summaryContent.innerHTML = '<p>No submissions yet.</p>';
+            return;
+        }
+
+        // Count votes for each date
+        const dateVotes = {};
+        submissions.forEach(submission => {
+            submission.dates.forEach(date => {
+                const dateKey = new Date(date).toDateString();
+                if (!dateVotes[dateKey]) {
+                    dateVotes[dateKey] = { count: 0, users: [], dateString: date };
+                }
+                dateVotes[dateKey].count++;
+                if (!dateVotes[dateKey].users.includes(submission.name)) {
+                    dateVotes[dateKey].users.push(submission.name);
+                }
+            });
+        });
+
+        // Find best dates (dates with most votes)
+        const maxVotes = Math.max(...Object.values(dateVotes).map(v => v.count));
+        const bestDates = Object.entries(dateVotes)
+            .filter(([_, data]) => data.count === maxVotes)
+            .map(([_, data]) => data);
+
+        // Sort all dates by vote count (descending)
+        const sortedDates = Object.entries(dateVotes)
+            .map(([_, data]) => data)
+            .sort((a, b) => b.count - a.count);
+
+        let html = '<div class="summary-section">';
+        
+        // Display best dates
+        if (bestDates.length > 0) {
+            html += '<h3 style="color: #28a745;">🌟 Best Dates (Most Popular)</h3>';
+            html += '<ul>';
+            bestDates.forEach(data => {
+                const date = new Date(data.dateString);
+                const formattedDate = date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                html += `<li><strong>${formattedDate}</strong> - ${data.count} vote(s) from: ${data.users.join(', ')}</li>`;
+            });
+            html += '</ul>';
+        }
+
+        // Display all submissions
+        html += '<h3>All Submissions</h3>';
+        html += '<div class="submissions-list">';
+        submissions.forEach(submission => {
+            html += `<div class="submission-item">`;
+            html += `<strong>${submission.name}</strong>: `;
+            const dateList = submission.dates.map(date => {
+                const d = new Date(date);
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }).join(', ');
+            html += dateList;
+            html += `</div>`;
+        });
+        html += '</div>';
+
+        // Display all dates with vote counts
+        html += '<h3>Date Popularity</h3>';
+        html += '<div class="date-popularity">';
+        sortedDates.forEach(data => {
+            const date = new Date(data.dateString);
+            const formattedDate = date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            const isBest = data.count === maxVotes;
+            html += `<div class="date-vote-item ${isBest ? 'best-date' : ''}">`;
+            html += `<span class="date-label">${formattedDate}</span>`;
+            html += `<span class="vote-count">${data.count} vote(s)</span>`;
+            html += `<span class="voters">(${data.users.join(', ')})</span>`;
+            html += `</div>`;
+        });
+        html += '</div>';
+
+        html += '</div>';
+        summaryContent.innerHTML = html;
+    }
+
     generateCalendars();
+    loadSummary();
 });

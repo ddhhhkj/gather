@@ -48,8 +48,85 @@ h2 {
     color: white;
 }
 
+#name-input-container {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#name-input-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+#name-input {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 250px;
+}
+
 #submit-btn {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+}
+
+#summary-container {
+    border-top: 2px solid #ccc;
+    padding-top: 20px;
+}
+
+.summary-section {
+    margin-top: 20px;
+}
+
+.submissions-list {
+    margin: 15px 0;
+}
+
+.submission-item {
+    padding: 8px;
+    margin: 5px 0;
+    background-color: #f8f9fa;
+    border-left: 3px solid #007bff;
+    border-radius: 4px;
+}
+
+.date-popularity {
+    margin: 15px 0;
+}
+
+.date-vote-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    gap: 10px;
+}
+
+.date-vote-item.best-date {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+    font-weight: bold;
+}
+
+.date-label {
+    flex: 1;
+    min-width: 150px;
+}
+
+.vote-count {
+    font-weight: bold;
+    color: #007bff;
+    min-width: 80px;
+}
+
+.voters {
+    flex: 2;
+    color: #666;
+    font-size: 0.9em;
 }
